@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DutsNails Studio | Painel</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body class="admin-page">
+<script>
+if(localStorage.getItem("duts_admin_logado") !== "sim"){
+  window.location.href = "login.html";
+}
+function sair(){
+  localStorage.removeItem("duts_admin_logado");
+  window.location.href = "login.html";
+}
+</script>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <h2 style="font-size:28px;">Duts Studio</h2>
+    <p style="color:#aaa;margin:8px 0 20px;">Painel privado</p>
+    <a class="active" href="painel.html">Dashboard</a>
+    <a href="agenda.html">Agenda</a>
+    <a href="clientes.html">Clientes</a>
+    <a href="financeiro.html">Financeiro</a>
+    <a href="../index.html">Ver site</a>
+    <a href="#" onclick="sair()">Sair</a>
+  </aside>
+
+  <main>
+    <div class="top-admin">
+      <div><div class="mini">Visão geral</div><h1 style="font-size:46px;">Olá, Duda 👋</h1><p>Resumo do dia da DutsNails.</p></div>
+      <button class="btn light" onclick="sair()">Sair</button>
+    </div>
+
+    <div class="stats">
+      <div class="card stat"><span>Hoje</span><strong>R$650</strong><p>faturamento</p></div>
+      <div class="card stat"><span>Mês</span><strong>R$5.280</strong><p>recebido</p></div>
+      <div class="card stat"><span>Clientes</span><strong>127</strong><p>cadastradas</p></div>
+      <div class="card stat"><span>Retorno</span><strong>84%</strong><p>fidelização</p></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:20px;">
+      <h3>Agenda do dia</h3>
+      <table>
+        <thead><tr><th>Horário</th><th>Cliente</th><th>Serviço</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>09:00</td><td>Maria</td><td>Alongamento F1</td><td>Confirmado</td></tr>
+          <tr><td>11:00</td><td>Juliana</td><td>Manutenção</td><td>Pendente</td></tr>
+          <tr><td>14:00</td><td>Bianca</td><td>Blindagem</td><td>Confirmado</td></tr>
+          <tr><td>17:00</td><td>Fernanda</td><td>Nail Art</td><td>Confirmado</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h3>Agenda semanal</h3>
+      <div class="calendar">
+        <div class="day"><b>Seg</b><div class="appt">09:00 Maria</div><div class="appt">15:00 Bianca</div></div>
+        <div class="day"><b>Ter</b><div class="appt">11:00 Ju</div><div class="appt">17:00 Ana</div></div>
+        <div class="day"><b>Qua</b><div class="appt">09:00 Cliente</div></div>
+        <div class="day"><b>Qui</b><div class="appt">14:00 Manutenção</div></div>
+        <div class="day"><b>Sex</b><div class="appt">10:00 Alongamento</div></div>
+        <div class="day"><b>Sáb</b><div class="appt">09:00 Noiva</div><div class="appt">13:00 Spa</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
