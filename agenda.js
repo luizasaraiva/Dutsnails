@@ -20,3 +20,4 @@ document.addEventListener("DOMContentLoaded", () => {
     window.open("https://wa.me/" + numero + "?text=" + mensagem, "_blank");
   });
 });
+
