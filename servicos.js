@@ -1,5 +1,4 @@
-// SERVIÇOS DO DUTSNAILS
-// Para editar valores, nomes, durações ou descrições, altere apenas este arquivo.
+import { account, databases, storage } from "./appwrite-config.js";
 
 const DUTS_SERVICOS = [
   { icone: "💅", nome: "Alongamento Molde F1", duracao: "2h30", preco: "R$150", descricao: "Alongamento com acabamento delicado e natural.", observacao: "" },
