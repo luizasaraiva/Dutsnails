@@ -1,3 +1,4 @@
+import { account, databases, storage } from "./appwrite-config.js";
 document.addEventListener("DOMContentLoaded", () => {
   const formReserva = document.getElementById("formReserva");
   if(!formReserva) return;
