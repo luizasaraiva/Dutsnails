@@ -1,12 +1,27 @@
-import { account, databases, storage } from "./appwrite-config.js";
-
-const DUTS_SERVICOS = [
-  { icone: "💅", nome: "Alongamento Molde F1", duracao: "2h30", preco: "R$150", descricao: "Alongamento com acabamento delicado e natural.", observacao: "" },
-  { icone: "🤍", nome: "Blindagem", duracao: "1h15", preco: "R$90", descricao: "Proteção para unhas naturais. Não possui manutenção, pois há troca de 100% do produto.", observacao: "Blindagem não possui manutenção." },
-  { icone: "✨", nome: "Alongamento Híbrido", duracao: "2h30", preco: "R$180", descricao: "Técnica híbrida para estrutura resistente e acabamento elegante.", observacao: "" },
-  { icone: "💎", nome: "Alongamento Fibra de Vidro", duracao: "2h30", preco: "R$180", descricao: "Alongamento resistente, sofisticado e com acabamento refinado.", observacao: "" },
-  { icone: "🕊️", nome: "Remoção", duracao: "sob avaliação", preco: "R$50", descricao: "Trocas de procedimento que necessitem nova aplicação ou novo método terão cobrança da remoção.", observacao: "Cobrança em trocas que exigem nova aplicação ou novo método." },
-  { icone: "🌸", nome: "Banho de Gel", duracao: "1h40", preco: "R$100", descricao: "Camada de resistência e brilho para unhas naturais.", observacao: "" },
-  { icone: "🎀", nome: "Decorações Complexas", duracao: "30min", preco: "R$25", descricao: "Decorações elaboradas para as duas mãos.", observacao: "Valor referente às duas mãos." },
-  { icone: "🔧", nome: "Manutenções", duracao: "sob agenda", preco: "R$100", descricao: "Valor único independente do procedimento de aplicação. Blindagem não possui manutenção.", observacao: "Independente do procedimento de aplicação." }
+const VELLURE_SERVICOS_PADRAO = [
+  { id: 1, categoria: "Unhas", icone: "VL", nome: "Alongamento Molde F1", duracao: "2h30", preco: "R$ 150", descricao: "Alongamento elegante, resistente e com acabamento natural.", observacao: "", ativo: true },
+  { id: 2, categoria: "Unhas", icone: "VL", nome: "Blindagem", duracao: "1h15", preco: "R$ 90", descricao: "Proteção e resistência para unhas naturais.", observacao: "Não possui manutenção; o produto é renovado integralmente.", ativo: true },
+  { id: 3, categoria: "Unhas", icone: "VL", nome: "Alongamento Híbrido", duracao: "2h30", preco: "R$ 180", descricao: "Estrutura resistente com acabamento delicado e sofisticado.", observacao: "", ativo: true },
+  { id: 4, categoria: "Unhas", icone: "VL", nome: "Fibra de Vidro", duracao: "2h30", preco: "R$ 180", descricao: "Alongamento refinado, resistente e personalizado.", observacao: "", ativo: true },
+  { id: 5, categoria: "Unhas", icone: "VL", nome: "Banho de Gel", duracao: "1h40", preco: "R$ 100", descricao: "Resistência e brilho para acompanhar o crescimento da unha natural.", observacao: "", ativo: true },
+  { id: 6, categoria: "Unhas", icone: "VL", nome: "Manutenção", duracao: "Sob agenda", preco: "R$ 100", descricao: "Manutenção da estrutura e renovação do acabamento.", observacao: "Blindagem não possui manutenção.", ativo: true },
+  { id: 7, categoria: "Unhas", icone: "VL", nome: "Remoção", duracao: "Sob avaliação", preco: "R$ 50", descricao: "Remoção cuidadosa, preservando a saúde das unhas naturais.", observacao: "", ativo: true },
+  { id: 8, categoria: "Decoração", icone: "VL", nome: "Decoração Complexa", duracao: "+30 min", preco: "R$ 25", descricao: "Arte elaborada e personalizada para as duas mãos.", observacao: "Valor referente às duas mãos.", ativo: true },
+  { id: 9, categoria: "Extensão de Cílios", icone: "VL", nome: "Volume Brasileiro", duracao: "Sob agenda", preco: "R$ 130", descricao: "Extensão com efeito volumoso, leve e bem definido.", observacao: "", ativo: true },
+  { id: 10, categoria: "Extensão de Cílios", icone: "VL", nome: "Volume Fio a Fio", duracao: "Sob agenda", preco: "R$ 90", descricao: "Aplicação delicada para um resultado natural e elegante.", observacao: "", ativo: true },
+  { id: 11, categoria: "Extensão de Cílios", icone: "VL", nome: "Volume Egípcio", duracao: "Sob agenda", preco: "R$ 150", descricao: "Volume marcante com acabamento sofisticado e organizado.", observacao: "", ativo: true },
+  { id: 12, categoria: "Extensão de Cílios", icone: "VL", nome: "Efeito Fox", duracao: "Sob agenda", preco: "R$ 160", descricao: "Mapeamento alongado para valorizar e elevar o olhar.", observacao: "", ativo: true },
+  { id: 13, categoria: "Extensão de Cílios", icone: "VL", nome: "Volume Express", duracao: "Sob agenda", preco: "R$ 90", descricao: "Aplicação prática para realçar o olhar com leveza.", observacao: "", ativo: true },
+  { id: 14, categoria: "Extensão de Cílios", icone: "VL", nome: "Mega Brasileiro ou Russo", duracao: "Sob agenda", preco: "R$ 180", descricao: "Volume intenso e personalizado para um olhar de destaque.", observacao: "", ativo: true },
+  { id: 15, categoria: "Extensão de Cílios", icone: "VL", nome: "Remoção de Extensão de Cílios", duracao: "Sob agenda", preco: "R$ 60", descricao: "Remoção cuidadosa da extensão, preservando os fios naturais.", observacao: "", ativo: true },
+  { id: 16, categoria: "Combos Promocionais", icone: "VL", nome: "Combo Delicada", duracao: "Sob agenda", preco: "R$ 219", descricao: "Alongamento Molde F1 + Volume Fio a Fio para um resultado delicado e elegante.", observacao: "Valor avulso: R$ 240. Economia de R$ 21.", ativo: true },
+  { id: 17, categoria: "Combos Promocionais", icone: "VL", nome: "Combo Brasileira", duracao: "Sob agenda", preco: "R$ 249", descricao: "Alongamento Molde F1 + Volume Brasileiro para unhas impecáveis e olhar marcante.", observacao: "Valor avulso: R$ 280. Economia de R$ 31.", ativo: true },
+  { id: 18, categoria: "Combos Promocionais", icone: "VL", nome: "Combo Fox Signature", duracao: "Sob agenda", preco: "R$ 299", descricao: "Alongamento Híbrido + Efeito Fox em uma experiência completa Vellure.", observacao: "Valor avulso: R$ 340. Economia de R$ 41.", ativo: true },
+  { id: 19, categoria: "Combos Promocionais", icone: "VL", nome: "Combo Mega Luxo", duracao: "Sob agenda", preco: "R$ 329", descricao: "Fibra de Vidro + Mega Brasileiro ou Russo para um visual sofisticado e intenso.", observacao: "Valor avulso: R$ 360. Economia de R$ 31.", ativo: true },
+  { id: 20, categoria: "Manutenção de Cílios", icone: "VL", nome: "Manutenção Fio a Fio", duracao: "Sob agenda", preco: "R$ 80", descricao: "Manutenção da técnica Fio a Fio.", observacao: "", ativo: true },
+  { id: 21, categoria: "Manutenção de Cílios", icone: "VL", nome: "Manutenção Express", duracao: "Sob agenda", preco: "R$ 80", descricao: "Manutenção da técnica Express.", observacao: "", ativo: true },
+  { id: 22, categoria: "Manutenção de Cílios", icone: "VL", nome: "Manutenção Volume Brasileiro", duracao: "Sob agenda", preco: "R$ 85", descricao: "Manutenção do Volume Brasileiro.", observacao: "", ativo: true },
+  { id: 23, categoria: "Manutenção de Cílios", icone: "VL", nome: "Manutenção Volume Egípcio", duracao: "Sob agenda", preco: "R$ 90", descricao: "Manutenção do Volume Egípcio.", observacao: "", ativo: true },
+  { id: 24, categoria: "Manutenção de Cílios", icone: "VL", nome: "Manutenção Efeito Fox", duracao: "Sob agenda", preco: "R$ 100", descricao: "Manutenção do Efeito Fox.", observacao: "", ativo: true },
+  { id: 25, categoria: "Manutenção de Cílios", icone: "VL", nome: "Manutenção Mega Brasileiro ou Russo", duracao: "Sob agenda", preco: "R$ 120", descricao: "Manutenção do Mega Brasileiro ou Russo.", observacao: "", ativo: true }
 ];
