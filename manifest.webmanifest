@@ -1,0 +1,21 @@
+{
+  "name": "Vellure Studio",
+  "short_name": "Vellure",
+  "description": "Agenda, Clube Vellure, pagamentos e assistência personalizada.",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f5ef",
+  "theme_color": "#141412",
+  "lang": "pt-BR",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ],
+  "shortcuts": [
+    {"name":"Agendar","url":"./index.html#reserva","icons":[{"src":"icon-192.png","sizes":"192x192"}]},
+    {"name":"Clube Vellure","url":"./cliente-area.html","icons":[{"src":"icon-192.png","sizes":"192x192"}]},
+    {"name":"Assistente","url":"./assistente.html","icons":[{"src":"icon-192.png","sizes":"192x192"}]}
+  ]
+}
