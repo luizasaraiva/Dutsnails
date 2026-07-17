@@ -1,12 +1,25 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const tabelaServicos = document.getElementById("tabelaServicos");
-  if(tabelaServicos && window.DUTS_SERVICOS){
-    tabelaServicos.innerHTML = DUTS_SERVICOS.map(s => `
-      <tr>
-        <td>${s.nome}</td>
-        <td>${s.duracao}</td>
-        <td>${s.preco}</td>
-        <td>${s.observacao || "-"}</td>
-      </tr>`).join("");
-  }
-});
+let editandoId=null;
+function moeda(valor){return valor.startsWith('R$')?valor:`R$ ${valor}`}
+function renderTabelaServicos(){
+ const tbody=document.getElementById('tabelaServicos');if(!tbody)return;
+ const servicos=obterServicos();
+ tbody.innerHTML=servicos.map(s=>`<tr><td><b>${s.nome}</b><small>${s.categoria||''}</small></td><td>${s.duracao}</td><td>${s.preco}</td><td><span class="status ${s.ativo===false?'off':''}">${s.ativo===false?'Oculto':'Visível'}</span></td><td class="table-actions"><button onclick="editarServico(${s.id})">Editar</button><button onclick="alternarServico(${s.id})">${s.ativo===false?'Ativar':'Ocultar'}</button><button class="danger" onclick="excluirServico(${s.id})">Excluir</button></td></tr>`).join('');
+}
+function abrirEditorServico(){document.getElementById('editorServico').classList.add('active');document.getElementById('nomeServico').focus()}
+function fecharEditorServico(){document.getElementById('editorServico').classList.remove('active');document.getElementById('formServico').reset();editandoId=null;document.getElementById('tituloEditor').textContent='Novo serviço'}
+function editarServico(id){const s=obterServicos().find(x=>x.id===id);if(!s)return;editandoId=id;document.getElementById('tituloEditor').textContent='Editar serviço';['nome','categoria','duracao','preco','descricao','observacao'].forEach(k=>document.getElementById(k+'Servico').value=s[k]||'');document.getElementById('ativoServico').checked=s.ativo!==false;abrirEditorServico()}
+function alternarServico(id){const arr=obterServicos();const s=arr.find(x=>x.id===id);s.ativo=s.ativo===false;salvarServicos(arr);renderTabelaServicos()}
+function excluirServico(id){if(!confirm('Excluir este serviço do catálogo?'))return;salvarServicos(obterServicos().filter(s=>s.id!==id));renderTabelaServicos()}
+function salvarFormularioServico(e){e.preventDefault();const arr=obterServicos();const dados={id:editandoId||Date.now(),icone:'VL',nome:document.getElementById('nomeServico').value.trim(),categoria:document.getElementById('categoriaServico').value.trim(),duracao:document.getElementById('duracaoServico').value.trim(),preco:moeda(document.getElementById('precoServico').value.trim()),descricao:document.getElementById('descricaoServico').value.trim(),observacao:document.getElementById('observacaoServico').value.trim(),ativo:document.getElementById('ativoServico').checked};const i=arr.findIndex(s=>s.id===editandoId);if(i>=0)arr[i]=dados;else arr.push(dados);salvarServicos(arr);fecharEditorServico();renderTabelaServicos()}
+function restaurarCatalogo(){if(confirm('Restaurar o catálogo original da Vellure?')){restaurarServicos();renderTabelaServicos()}}
+document.addEventListener('DOMContentLoaded',()=>{renderTabelaServicos();document.getElementById('formServico')?.addEventListener('submit',salvarFormularioServico)});
+let editandoAssinaturaId=null;
+function renderTabelaAssinaturas(){const t=document.getElementById('tabelaAssinaturas');if(!t||!window.obterAssinaturas)return;const a=obterAssinaturas();t.innerHTML=a.map(p=>`<tr><td><b>${p.nome}</b><small>${p.descricao||''}</small></td><td>${p.preco}</td><td>${p.destaque?'Recomendado':'—'}</td><td><span class="status ${p.ativo===false?'off':''}">${p.ativo===false?'Oculto':'Visível'}</span></td><td class="table-actions"><button onclick="editarAssinatura(${p.id})">Editar</button><button onclick="alternarAssinatura(${p.id})">${p.ativo===false?'Ativar':'Ocultar'}</button><button class="danger" onclick="excluirAssinatura(${p.id})">Excluir</button></td></tr>`).join('')}
+function abrirEditorAssinatura(){document.getElementById('editorAssinatura').classList.add('active');document.getElementById('nomeAssinatura').focus()}
+function fecharEditorAssinatura(){document.getElementById('editorAssinatura').classList.remove('active');document.getElementById('formAssinatura').reset();editandoAssinaturaId=null;document.getElementById('tituloEditorAssinatura').textContent='Novo pacote'}
+function editarAssinatura(id){const p=obterAssinaturas().find(x=>x.id===id);if(!p)return;editandoAssinaturaId=id;document.getElementById('tituloEditorAssinatura').textContent='Editar pacote';document.getElementById('nomeAssinatura').value=p.nome||'';document.getElementById('precoAssinatura').value=p.preco||'';document.getElementById('descricaoAssinatura').value=p.descricao||'';document.getElementById('beneficiosAssinatura').value=(p.beneficios||[]).join('\n');document.getElementById('destaqueAssinatura').checked=!!p.destaque;document.getElementById('ativoAssinatura').checked=p.ativo!==false;abrirEditorAssinatura()}
+function alternarAssinatura(id){const a=obterAssinaturas();const p=a.find(x=>x.id===id);p.ativo=p.ativo===false;salvarAssinaturas(a);renderTabelaAssinaturas()}
+function excluirAssinatura(id){if(!confirm('Excluir este pacote?'))return;salvarAssinaturas(obterAssinaturas().filter(x=>x.id!==id));renderTabelaAssinaturas()}
+function salvarFormularioAssinatura(e){e.preventDefault();const a=obterAssinaturas();const preco=document.getElementById('precoAssinatura').value.trim();const dados={id:editandoAssinaturaId||Date.now(),nome:document.getElementById('nomeAssinatura').value.trim(),preco:preco.startsWith('R$')?preco:`R$ ${preco}`,descricao:document.getElementById('descricaoAssinatura').value.trim(),beneficios:document.getElementById('beneficiosAssinatura').value.split('\n').map(x=>x.trim()).filter(Boolean),destaque:document.getElementById('destaqueAssinatura').checked,ativo:document.getElementById('ativoAssinatura').checked};if(dados.destaque)a.forEach(x=>x.destaque=false);const i=a.findIndex(x=>x.id===editandoAssinaturaId);if(i>=0)a[i]=dados;else a.push(dados);salvarAssinaturas(a);fecharEditorAssinatura();renderTabelaAssinaturas()}
+function restaurarPlanos(){if(confirm('Restaurar os pacotes iniciais?')){restaurarAssinaturas();renderTabelaAssinaturas()}}
+document.addEventListener('DOMContentLoaded',()=>{renderTabelaAssinaturas();document.getElementById('formAssinatura')?.addEventListener('submit',salvarFormularioAssinatura)});
