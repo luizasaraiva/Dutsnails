@@ -19,3 +19,10 @@ function renderAssinaturas(){
 }
 function solicitarAssinatura(nome,preco){const numero=(window.VELLURE_CONFIG&&VELLURE_CONFIG.whatsapp)||'5511966818500';const msg=`Olá! Tenho interesse em assinar o pacote mensal ${nome} (${preco}). Gostaria de receber as regras, formas de pagamento e disponibilidade.`;window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`,'_blank','noopener')}
 document.addEventListener('DOMContentLoaded',renderAssinaturas);
+
+function aplicarServicoRecomendado(){
+ const params=new URLSearchParams(location.search);const nome=params.get('servico')||localStorage.getItem('vellure_servico_recomendado');if(!nome)return;
+ const select=document.getElementById('servico');if(!select)return;
+ const opt=[...select.options].find(o=>o.value.startsWith(nome)||o.textContent.includes(nome));if(opt){select.value=opt.value;select.dispatchEvent(new Event('change',{bubbles:true}));localStorage.removeItem('vellure_servico_recomendado');setTimeout(()=>document.getElementById('reserva')?.scrollIntoView({behavior:'smooth'}),150)}
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(aplicarServicoRecomendado,80));
