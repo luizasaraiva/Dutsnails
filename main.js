@@ -26,3 +26,5 @@ function aplicarServicoRecomendado(){
  const opt=[...select.options].find(o=>o.value.startsWith(nome)||o.textContent.includes(nome));if(opt){select.value=opt.value;select.dispatchEvent(new Event('change',{bubbles:true}));localStorage.removeItem('vellure_servico_recomendado');setTimeout(()=>document.getElementById('reserva')?.scrollIntoView({behavior:'smooth'}),150)}
 }
 document.addEventListener('DOMContentLoaded',()=>setTimeout(aplicarServicoRecomendado,80));
+document.addEventListener('vellure:servicos-carregados',()=>{renderServicos();aplicarServicoRecomendado();window.atualizarResumoPagamento?.()});
+document.addEventListener('vellure:assinaturas-carregadas',renderAssinaturas);
