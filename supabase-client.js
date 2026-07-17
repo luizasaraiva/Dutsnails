@@ -4,7 +4,11 @@
 <script src="supabase-client.js"></script>
 */
 (() => {
-  const cfg = window.VELLURE_SUPABASE;
+  const rawCfg = window.VELLURE_SUPABASE || window.VELLURE_SUPABASE_CONFIG;
+  const cfg = rawCfg ? {
+    url: rawCfg.url,
+    publishableKey: rawCfg.publishableKey || rawCfg.anonKey
+  } : null;
   if (!cfg?.url || !cfg?.publishableKey || cfg.url.includes('SEU-PROJETO')) {
     console.warn('Supabase ainda não configurado.');
     window.vellureDb = null;
