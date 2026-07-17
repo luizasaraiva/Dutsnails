@@ -1,0 +1,7 @@
+let vellureInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();vellureInstallPrompt=e;document.querySelectorAll('[data-install-pwa]').forEach(b=>b.hidden=false)});
+window.addEventListener('appinstalled',()=>{vellureInstallPrompt=null;document.querySelectorAll('[data-install-pwa]').forEach(b=>b.hidden=true);localStorage.setItem('vellure_pwa_instalado','sim')});
+async function instalarVellure(){if(!vellureInstallPrompt){alert('No iPhone, toque em Compartilhar e depois em “Adicionar à Tela de Início”. No Android/Chrome, abra o menu e escolha “Instalar aplicativo”.');return}vellureInstallPrompt.prompt();await vellureInstallPrompt.userChoice;vellureInstallPrompt=null}
+async function ativarNotificacoesVellure(){if(!('Notification'in window)){alert('Este navegador não oferece notificações.');return}const p=await Notification.requestPermission();if(p==='granted'){new Notification('Vellure Studio',{body:'Notificações ativadas. Você poderá receber lembretes de agenda e benefícios.',icon:'icon-192.png',data:{url:'cliente-area.html'}});localStorage.setItem('vellure_notificacoes','ativas')}else alert('A permissão de notificações não foi concedida.')}
+window.instalarVellure=instalarVellure;window.ativarNotificacoesVellure=ativarNotificacoesVellure;
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.error));
