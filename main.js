@@ -9,7 +9,7 @@ function renderServicos(){
   const select=document.getElementById("servico");
   if(select) select.innerHTML='<option value="">Escolha o serviço</option>'+servicos.map(s=>`<option value="${s.nome} | ${s.preco}">${s.categoria} — ${s.nome} (${s.preco})</option>`).join('');
 }
-function selecionarServico(nome){const select=document.getElementById('servico');if(select){[...select.options].find(o=>o.value.startsWith(nome))?.setAttribute('selected','selected');select.value=[...select.options].find(o=>o.value.startsWith(nome))?.value||'';}location.href='#reserva'}
+function selecionarServico(nome){const select=document.getElementById('servico');if(select){const opcao=[...select.options].find(o=>o.value.startsWith(nome));select.value=opcao?.value||'';select.dispatchEvent(new Event('change',{bubbles:true}));}location.href='#reserva'}
 function renderGaleria(){const g=document.getElementById("listaGaleria");if(g&&window.VELLURE_GALERIA)g.innerHTML=VELLURE_GALERIA.map(i=>`<div class="photo" onclick="escolherModelo('${i.nome}')" style="background-image:url('${i.imagem}')"><span>${i.nome}</span></div>`).join('')}
 document.addEventListener("DOMContentLoaded",()=>{renderServicos();renderGaleria();const d=document.getElementById('data');if(d)d.min=new Date().toISOString().split('T')[0]});
 function renderAssinaturas(){
