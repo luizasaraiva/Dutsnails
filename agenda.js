@@ -1,23 +1,17 @@
-import { account, databases, storage } from "./appwrite-config.js";
-document.addEventListener("DOMContentLoaded", () => {
-  const formReserva = document.getElementById("formReserva");
-  if(!formReserva) return;
-
-  formReserva.addEventListener("submit", function(e){
-    e.preventDefault();
-    const nome = document.getElementById("nome").value;
-    const telefone = document.getElementById("telefone").value;
-    const servico = document.getElementById("servico").value;
-    const data = document.getElementById("data").value;
-    const horario = document.getElementById("horario").value;
-    const obs = document.getElementById("obs").value || "Sem observações";
-    const clube = document.getElementById("querClube").checked ? "Sim, quero criar login depois e participar do Clube Duts" : "Não quero criar login agora";
-    const numero = (window.DUTS_CONFIG && DUTS_CONFIG.whatsapp) ? DUTS_CONFIG.whatsapp : "5511966818500";
-    const mensagem =
-      "Olá, DutsNails! Gostaria de reservar um horário.%0A%0A" +
-      "Nome: " + nome + "%0AWhatsApp: " + telefone + "%0AServiço: " + servico +
-      "%0AData desejada: " + data + "%0AHorário: " + horario +
-      "%0AClube Duts: " + clube + "%0AObservação: " + obs;
-    window.open("https://wa.me/" + numero + "?text=" + mensagem, "_blank");
-  });
+function formatarDataBR(valor){if(!valor)return "Não informada";const [ano,mes,dia]=valor.split('-');return `${dia}/${mes}/${ano}`}
+document.addEventListener("DOMContentLoaded",()=>{
+ const form=document.getElementById("formReserva"); if(!form)return;
+ form.addEventListener("submit",e=>{
+  e.preventDefault();
+  const nome=document.getElementById("nome").value.trim();
+  const telefone=document.getElementById("telefone").value.trim();
+  const servico=document.getElementById("servico").value;
+  const data=formatarDataBR(document.getElementById("data").value);
+  const horario=document.getElementById("horario").value;
+  const obs=document.getElementById("obs").value.trim()||"Sem observações";
+  const clube=document.getElementById("querClube")?.checked?"Tenho interesse no Clube Vellure":"Não informado";
+  const numero=window.VELLURE_CONFIG?.whatsapp||"5511966818500";
+  const mensagem=`Olá, Vellure Studio! Gostaria de solicitar um agendamento.\n\nNome: ${nome}\nWhatsApp: ${telefone}\nProcedimento: ${servico}\nData desejada: ${data}\nHorário desejado: ${horario}\nClube Vellure: ${clube}\nObservações: ${obs}\n\nAguardo a confirmação de disponibilidade.`;
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`,"_blank","noopener");
+ });
 });
