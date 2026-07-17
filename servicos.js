@@ -27,6 +27,7 @@ const VELLURE_SERVICOS_PADRAO = [
 ];
 
 function obterServicos(){
+  if(Array.isArray(window.VELLURE_SERVICOS)&&window.VELLURE_SERVICOS.length&&window.VELLURE_SERVICOS!==VELLURE_SERVICOS_PADRAO)return window.VELLURE_SERVICOS;
   try {
     const salvos = JSON.parse(localStorage.getItem("vellure_servicos"));
     if (Array.isArray(salvos) && salvos.length) {
@@ -54,3 +55,39 @@ window.VELLURE_SERVICOS = obterServicos();
 window.obterServicos = obterServicos;
 window.salvarServicos = salvarServicos;
 window.restaurarServicos = restaurarServicos;
+// Sincronização com Supabase. O catálogo padrão permanece como fallback offline do PWA.
+async function sincronizarServicosSupabase(){
+  if(!window.vellureDb) return obterServicos();
+  try{
+    const rows=await window.vellureDb.catalog.services();
+    if(!rows.length) return obterServicos();
+    const convertidos=rows.map(r=>({
+      id:r.id,
+      categoria:r.category,
+      icone:'VL',
+      nome:r.name,
+      duracao:r.duration_minutes?`${Math.floor(r.duration_minutes/60)}h${r.duration_minutes%60?String(r.duration_minutes%60).padStart(2,'0'):''}`:'Sob agenda',
+      duracaoMinutos:r.duration_minutes,
+      preco:Number(r.price).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),
+      precoNumero:Number(r.price),
+      precoManutencao:r.maintenance_price==null?null:Number(r.maintenance_price),
+      descricao:r.description||'',
+      observacao:r.notes||'',
+      imagem:r.image_path||'',
+      destaque:!!r.is_featured,
+      ativo:true,
+      ordem:r.sort_order||0
+    }));
+    window.VELLURE_SERVICOS=convertidos;
+    localStorage.setItem('vellure_servicos_cache',JSON.stringify(convertidos));
+    document.dispatchEvent(new CustomEvent('vellure:servicos-carregados',{detail:convertidos}));
+    return convertidos;
+  }catch(error){
+    console.error('Falha ao carregar serviços do Supabase:',error);
+    const cache=JSON.parse(localStorage.getItem('vellure_servicos_cache')||'null');
+    if(Array.isArray(cache)&&cache.length) window.VELLURE_SERVICOS=cache;
+    return window.VELLURE_SERVICOS;
+  }
+}
+window.sincronizarServicosSupabase=sincronizarServicosSupabase;
+document.addEventListener('DOMContentLoaded',sincronizarServicosSupabase);
