@@ -1,5 +1,15 @@
 function formatarDataBR(valor){if(!valor)return 'Não informada';const [ano,mes,dia]=valor.split('-');return `${dia}/${mes}/${ano}`}
 function dinheiro(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function uuidValido(valor){return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(valor||''))}
+async function resolverServicoSupabase(servico){
+  if(uuidValido(servico?.id)) return servico;
+  const nome=String(servico?.nome||'').trim();
+  if(!nome) throw new Error('Selecione novamente o procedimento.');
+  const {data,error}=await window.vellureDb.client.from('public_service_catalog').select('*').eq('name',nome).limit(1).maybeSingle();
+  if(error) throw error;
+  if(!data?.id||!uuidValido(data.id)) throw new Error('Este serviço ainda não está corretamente cadastrado no sistema. Atualize a página e selecione o procedimento novamente.');
+  return {...servico,id:data.id,nome:data.name||servico.nome,precoNumero:Number(data.price),preco:Number(data.price).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})};
+}
 
 document.addEventListener('DOMContentLoaded',()=>{
  const form=document.getElementById('formReserva'); if(!form)return;
@@ -12,8 +22,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(!window.vellureDb) throw new Error('A conexão com o sistema não foi carregada.');
     let user;
     try{user=await window.vellureDb.auth.user()}catch{throw new Error('Entre na sua conta antes de confirmar o agendamento.');}
-    const servico=window.servicoSelecionadoPagamento?.();
+    let servico=window.servicoSelecionadoPagamento?.();
     if(!servico?.id) throw new Error('Selecione um procedimento válido.');
+    servico=await resolverServicoSupabase(servico);
     const data=document.getElementById('data').value;
     const horario=document.getElementById('horario').value;
     if(!data||!horario) throw new Error('Informe a data e o horário.');
