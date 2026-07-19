@@ -5,13 +5,16 @@ function escolherModelo(modelo){const obs=document.getElementById("obs");if(obs)
 function renderServicos(){
   const servicos=(window.obterServicos?obterServicos():window.VELLURE_SERVICOS||[]).filter(s=>s.ativo!==false);
   const lista=document.getElementById("listaServicos");
-  if(lista) lista.innerHTML=servicos.map(s=>`<article class="card service-card"><div class="service-top"><span class="service-mark">${s.icone||'VL'}</span><span class="category">${s.categoria||'Serviço'}</span></div><h3>${s.nome}</h3><p>${s.descricao||''}</p><div class="meta"><span>${s.duracao||''}</span><b>${s.preco||''}</b></div><button class="text-link" onclick="selecionarServico('${String(s.nome).replace(/'/g,"\\'")}')">Agendar este serviço →</button></article>`).join("");
+  if(lista) lista.innerHTML=servicos.map(s=>`<article class="card service-card"><div class="service-top"><span class="service-mark">${s.icone||'VL'}</span><span class="category">${s.categoria||'Serviço'}</span></div><h3>${s.nome}</h3><p>${s.descricao||''}</p><div class="meta"><span>${s.duracao||''}</span><b>${s.preco||''}</b></div><button class="text-link" onclick="selecionarServico('${String(s.nome).replace(/'/g,"\'")}')">Agendar este serviço →</button></article>`).join("");
   const select=document.getElementById("servico");
-  if(select) select.innerHTML='<option value="">Escolha o serviço</option>'+servicos.map(s=>`<option value="${s.nome} | ${s.preco}">${s.categoria} — ${s.nome} (${s.preco})</option>`).join('');
+  if(select){
+    const valorAtual=select.value;
+    select.innerHTML='<option value="">Escolha o serviço</option>'+servicos.map(s=>`<option value="${String(s.id)}" data-nome="${String(s.nome).replace(/"/g,'&quot;')}" data-preco="${String(s.preco||'').replace(/"/g,'&quot;')}">${s.categoria} — ${s.nome} (${s.preco})</option>`).join('');
+    if([...select.options].some(o=>o.value===valorAtual)) select.value=valorAtual;
+  }
 }
-function selecionarServico(nome){const select=document.getElementById('servico');if(select){const opcao=[...select.options].find(o=>o.value.startsWith(nome));select.value=opcao?.value||'';select.dispatchEvent(new Event('change',{bubbles:true}));}location.href='#reserva'}
-function renderGaleria(){const g=document.getElementById("listaGaleria");if(g&&window.VELLURE_GALERIA)g.innerHTML=VELLURE_GALERIA.map(i=>`<div class="photo" onclick="escolherModelo('${i.nome}')" style="background-image:url('${i.imagem}')"><span>${i.nome}</span></div>`).join('')}
-document.addEventListener("DOMContentLoaded",()=>{renderServicos();renderGaleria();const d=document.getElementById('data');if(d)d.min=new Date().toISOString().split('T')[0]});
+function selecionarServico(nome){const select=document.getElementById('servico');if(select){const opcao=[...select.options].find(o=>o.dataset.nome===nome||o.textContent.includes(nome));select.value=opcao?.value||'';select.dispatchEvent(new Event('change',{bubbles:true}));}location.href='#reserva'}
+document.addEventListener("DOMContentLoaded",()=>{renderServicos();const d=document.getElementById('data');if(d)d.min=new Date().toISOString().split('T')[0]});
 function renderAssinaturas(){
  const lista=document.getElementById('listaAssinaturas');if(!lista||!window.obterAssinaturas)return;
  const planos=obterAssinaturas().filter(p=>p.ativo!==false);
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded',renderAssinaturas);
 function aplicarServicoRecomendado(){
  const params=new URLSearchParams(location.search);const nome=params.get('servico')||localStorage.getItem('vellure_servico_recomendado');if(!nome)return;
  const select=document.getElementById('servico');if(!select)return;
- const opt=[...select.options].find(o=>o.value.startsWith(nome)||o.textContent.includes(nome));if(opt){select.value=opt.value;select.dispatchEvent(new Event('change',{bubbles:true}));localStorage.removeItem('vellure_servico_recomendado');setTimeout(()=>document.getElementById('reserva')?.scrollIntoView({behavior:'smooth'}),150)}
+ const opt=[...select.options].find(o=>o.dataset.nome===nome||o.textContent.includes(nome));if(opt){select.value=opt.value;select.dispatchEvent(new Event('change',{bubbles:true}));localStorage.removeItem('vellure_servico_recomendado');setTimeout(()=>document.getElementById('reserva')?.scrollIntoView({behavior:'smooth'}),150)}
 }
 document.addEventListener('DOMContentLoaded',()=>setTimeout(aplicarServicoRecomendado,80));
 document.addEventListener('vellure:servicos-carregados',()=>{renderServicos();aplicarServicoRecomendado();window.atualizarResumoPagamento?.()});
