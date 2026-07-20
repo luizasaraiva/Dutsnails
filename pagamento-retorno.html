@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f8f5ef"><title>Vellure Studio | Pagamento</title><link rel="stylesheet" href="style.css"><link rel="manifest" href="manifest.webmanifest"></head><body><main class="payment-return-page"><section class="payment-return-card"><div class="mini">MERCADO PAGO</div><div id="returnIcon" class="payment-return-icon">…</div><h1 id="returnTitle">Verificando pagamento</h1><p id="returnText">Estamos consultando a confirmação segura do seu pagamento.</p><div id="returnDetails" class="payment-return-details" hidden></div><div class="actions"><a class="btn gold" href="cliente-area.html">Minha área</a><a class="btn light" href="index.html">Voltar ao início</a></div><small>A confirmação definitiva é feita automaticamente pelo Mercado Pago.</small></section></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="supabase-client.js"></script><script>
+const params=new URLSearchParams(location.search);
+const paymentId=params.get('payment_id')||JSON.parse(sessionStorage.getItem('vellure_ultimo_agendamento')||'null')?.paymentId||'';
+const title=document.getElementById('returnTitle'),text=document.getElementById('returnText'),icon=document.getElementById('returnIcon'),details=document.getElementById('returnDetails');
+const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const date=v=>v?new Date(v).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'';
+function show(state,p){
+ const status=state||p?.status||'pending';
+ if(status==='paid'){icon.textContent='✓';title.textContent='Pagamento confirmado';text.textContent='Seu pagamento foi aprovado e o agendamento foi confirmado automaticamente.'}
+ else if(status==='failed'||status==='cancelled'||status==='failure'){icon.textContent='!';title.textContent='Pagamento não concluído';text.textContent='O pagamento foi recusado ou cancelado. Volte ao agendamento para tentar novamente.'}
+ else{icon.textContent='…';title.textContent='Pagamento em processamento';text.textContent='O Mercado Pago ainda está processando. Esta página será atualizada automaticamente por alguns instantes.'}
+ if(p){details.hidden=false;details.innerHTML=`<p><b>${p.appointment?.serviceName||'Procedimento Vellure'}</b></p><p>${money(p.amount)}${p.appointment?.startsAt?` • ${date(p.appointment.startsAt)}`:''}</p>`}
+}
+async function check(attempt=0){
+ if(!paymentId||!window.vellureDb){show(params.get('status'));return}
+ try{
+  const {data}=await window.vellureDb.client.auth.getSession();const token=data?.session?.access_token;
+  if(!token){show(params.get('status'));return}
+  const r=await fetch(`/api/payment-status?paymentId=${encodeURIComponent(paymentId)}`,{headers:{Authorization:`Bearer ${token}`}});const p=await r.json();
+  if(!r.ok)throw new Error(p.error||'Falha ao consultar');show(p.status,p);
+  if(p.status==='pending'&&attempt<10)setTimeout(()=>check(attempt+1),3000);
+ }catch{show(params.get('status'))}
+}
+check();
+</script></body></html>
