@@ -42,6 +42,7 @@ module.exports = async function handler(req, res) {
   if (paymentError || !payment) return send(res, 404, { error: 'Pagamento não encontrado.' });
   if (payment.client_id !== userData.user.id) return send(res, 403, { error: 'Este pagamento não pertence à sua conta.' });
   if (payment.status === 'paid') return send(res, 409, { error: 'Este pagamento já foi aprovado.' });
+  if (!Number.isFinite(Number(payment.amount)) || Number(payment.amount) <= 0) return send(res, 400, { error: 'O valor do pagamento é inválido.' });
 
   if (payment.gateway_checkout_url && payment.gateway_preference_id) {
     return send(res, 200, { checkoutUrl: payment.gateway_checkout_url, preferenceId: payment.gateway_preference_id });
