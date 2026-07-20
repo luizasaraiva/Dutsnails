@@ -39,6 +39,12 @@ module.exports = async function handler(req, res) {
   if (payment.client_id !== userData.user.id) return send(res, 403, { error: 'Acesso negado.' });
 
   const serviceName = payment.appointments?.appointment_items?.[0]?.service_name_snapshot || 'Procedimento Vellure';
+  const { data: profile } = await admin
+    .from('profiles')
+    .select('full_name,phone')
+    .eq('id', payment.client_id)
+    .maybeSingle();
+
   return send(res, 200, {
     id: payment.id,
     status: payment.status,
@@ -48,6 +54,10 @@ module.exports = async function handler(req, res) {
     method: payment.method,
     kind: payment.kind,
     paidAt: payment.paid_at,
+    client: profile ? {
+      name: profile.full_name || '',
+      phone: profile.phone || ''
+    } : null,
     appointment: payment.appointments ? {
       id: payment.appointments.id,
       status: payment.appointments.status,
