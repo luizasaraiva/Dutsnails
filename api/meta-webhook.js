@@ -1,12 +1,4 @@
-/**
- * Webhook da Meta / WhatsApp Cloud API para Vercel.
- *
- * Variável obrigatória na Vercel:
- * META_VERIFY_TOKEN
- *
- * GET  -> usado pela Meta para verificar o webhook.
- * POST -> recebe eventos do WhatsApp e responde 200 rapidamente.
- */
+
 
 module.exports = async function handler(req, res) {
   // Verificação inicial feita pela Meta.
