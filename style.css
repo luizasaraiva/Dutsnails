@@ -92,3 +92,6 @@ footer{background:var(--ink);padding:38px;text-align:center;color:#aaa}.footer-l
   .mobile-app-buttons{grid-template-columns:1fr}
   .mobile-app-actions{padding:18px}
 }
+
+/* Mercado Pago */
+.mercado-pago-box{margin:18px 0;padding:18px 20px;border:1px solid #ded8ce;border-radius:18px;background:#fff;display:grid;gap:5px}.mercado-pago-box b{font-size:18px}.mercado-pago-box p,.mercado-pago-box small{margin:0;color:#6f6a63}.payment-return-page{min-height:100vh;display:grid;place-items:center;padding:24px;background:#f5f0e8}.payment-return-card{width:min(560px,100%);padding:42px;text-align:center;border:1px solid #ded8ce;border-radius:30px;background:#fff;box-shadow:0 20px 60px rgba(30,25,20,.08)}.payment-return-card h1{font-size:clamp(34px,7vw,54px);margin:12px 0}.payment-return-card p{color:#6f6a63;line-height:1.65}.payment-return-card .actions{justify-content:center;margin:24px 0}.payment-return-icon{width:72px;height:72px;margin:18px auto;border-radius:50%;display:grid;place-items:center;background:#111;color:white;font-size:34px;font-weight:700}
