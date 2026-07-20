@@ -1,4 +1,4 @@
-const CACHE='vellure-layout-responsivo-v5';
+const CACHE='vellure-mp-v1';
 const ASSETS=[
   './',
   './index.html',
