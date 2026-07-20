@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": ">=18"
+    "node": "20.x"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "mercadopago": "^2.9.0"
+  },
+  "scripts": {
+    "check": "node --check api/meta-webhook.js && node --check api/mercadopago-webhook.js && node --check api/create-mercadopago-checkout.js"
   }
 }
